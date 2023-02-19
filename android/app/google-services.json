@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "361521628977",
+    "project_id": "tennis-lineapp",
+    "storage_bucket": "tennis-lineapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361521628977:android:bd168b5a8494b95ba1d210",
+        "android_client_info": {
+          "package_name": "com.jpcsc.tennislineapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "361521628977-v86e5ng2fpeu7ck52et3dgd2r80u4eti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9rsE9sNZhegUXyaQBJO-h1Y9-RSqPnm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "361521628977-v86e5ng2fpeu7ck52et3dgd2r80u4eti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
