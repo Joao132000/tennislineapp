@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tennislineapp/handlers/admob_service.dart';
+import 'package:tennislineapp/handlers/signin_signout.dart';
 import 'package:tennislineapp/screens/players_by_team.dart';
 
 import '../models/coach.dart';
@@ -58,12 +59,71 @@ class _MainCoachState extends State<MainCoach> {
             ),
           ),
           IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(
+                    'Would like to remove you account permanently?\nIt is not possible to undo this action.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                  actions: [
+                    Row(
+                      children: [
+                        TextButton(
+                          child: const Text(
+                            'Confirm',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          ),
+                          onPressed: () {
+                            FirebaseAuth.instance.currentUser!.delete();
+                            final deleteDoc = FirebaseFirestore.instance
+                                .collection('coach')
+                                .doc(FirebaseAuth.instance.currentUser!.uid);
+                            setState(() {
+                              deleteDoc.delete();
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignInSignOut()),
+                            );
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.cancel_outlined,
+              size: 30,
+            ),
+          ),
+          IconButton(
             onPressed: () => FirebaseAuth.instance.signOut(),
             icon: const Icon(
               Icons.logout,
               size: 30,
             ),
-          )
+          ),
         ],
       ),
       body: FutureBuilder<QuerySnapshot>(
