@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jpcsc.tennislineapp">
    <application
-        android:label="tennislineapp"
+        android:label="Tennis LineApp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
