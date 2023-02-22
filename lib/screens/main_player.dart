@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
+import 'package:tennislineapp/handlers/MenuItem.dart';
 import 'package:tennislineapp/handlers/utils.dart';
 import 'package:tennislineapp/screens/doubles_player_view.dart';
 import 'package:tennislineapp/screens/intro_player.dart';
@@ -92,174 +93,166 @@ class _MainPlayerState extends State<MainPlayer> {
         ),
         automaticallyImplyLeading: false,
         actions: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => IntroPlayer(),
+          PopupMenuButton<Item>(
+            onSelected: (value) async {
+              if (value == Item.item1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IntroPlayer(),
+                  ),
+                );
+              } else if (value == Item.item2) {
+                await getPlayer();
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Paste code below to move to a new team:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
                     ),
-                  );
-                },
-                icon: const Icon(
-                  Icons.lightbulb,
-                  size: 30,
-                ),
-              ),
-              IconButton(
-                onPressed: () async {
-                  await getPlayer();
-                  showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                            title: Text(
-                              'Paste code below to move to a new team:',
+                    content: TextField(
+                      controller: newTeamCodeController,
+                      textInputAction: TextInputAction.done,
+                      decoration:
+                          const InputDecoration(labelText: 'New Team Code'),
+                    ),
+                    actions: [
+                      Row(
+                        children: [
+                          TextButton(
+                            child: const Text(
+                              'Confirm',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 20,
                               ),
                             ),
-                            content: TextField(
-                              controller: newTeamCodeController,
-                              textInputAction: TextInputAction.done,
-                              decoration: const InputDecoration(
-                                  labelText: 'New Team Code'),
-                            ),
-                            actions: [
-                              Row(
-                                children: [
-                                  TextButton(
-                                    child: const Text(
-                                      'Confirm',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      await checkTeamFunc();
-                                      if (checkTeam) {
-                                        final updateDoc = FirebaseFirestore
-                                            .instance
-                                            .collection('player')
-                                            .doc(p?.id);
-                                        setState(() {
-                                          updateDoc.update({
-                                            'teamId':
-                                                newTeamCodeController.text,
-                                            'position': 0,
-                                            'challenge': false,
-                                          });
-                                        });
-                                        Navigator.pop(context);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SignInSignOut(),
-                                          ),
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: (context),
-                                          builder: (context) => AlertDialog(
-                                            title: Text(
-                                                'Please enter a valid code'),
-                                            titlePadding: EdgeInsets.all(10),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ));
-                },
-                icon: const Icon(Icons.qr_code_2_sharp),
-              ),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(
-                        'Would like to remove you account permanently?\nIt is not possible to undo this action.',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        ),
-                      ),
-                      actions: [
-                        Row(
-                          children: [
-                            TextButton(
-                              child: const Text(
-                                'Confirm',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              onPressed: () {
-                                FirebaseAuth.instance.currentUser!.delete();
-                                final deleteDoc = FirebaseFirestore.instance
+                            onPressed: () async {
+                              await checkTeamFunc();
+                              if (checkTeam) {
+                                final updateDoc = FirebaseFirestore.instance
                                     .collection('player')
-                                    .doc(
-                                        FirebaseAuth.instance.currentUser!.uid);
+                                    .doc(p?.id);
                                 setState(() {
-                                  deleteDoc.delete();
+                                  updateDoc.update({
+                                    'teamId': newTeamCodeController.text,
+                                    'position': 0,
+                                    'challenge': false,
+                                  });
                                 });
+                                Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignInSignOut()),
+                                    builder: (context) => const SignInSignOut(),
+                                  ),
                                 );
-                              },
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
+                              } else {
+                                showDialog(
+                                  context: (context),
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Please enter a valid code'),
+                                    titlePadding: EdgeInsets.all(10),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              } else if (value == Item.item3) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Would like to remove you account permanently?\nIt is not possible to undo this action.',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
                     ),
-                  );
-                },
-                icon: const Icon(
-                  Icons.cancel_outlined,
-                  size: 30,
-                ),
+                    actions: [
+                      Row(
+                        children: [
+                          TextButton(
+                            child: const Text(
+                              'Confirm',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                            ),
+                            onPressed: () {
+                              FirebaseAuth.instance.currentUser!.delete();
+                              final deleteDoc = FirebaseFirestore.instance
+                                  .collection('player')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid);
+                              setState(() {
+                                deleteDoc.delete();
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SignInSignOut()),
+                              );
+                            },
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              } else if (value == Item.item4) {
+                FirebaseAuth.instance.signOut();
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text('Tutorial'),
+                value: Item.item1,
               ),
-              IconButton(
-                onPressed: () => FirebaseAuth.instance.signOut(),
-                icon: const Icon(
-                  Icons.logout,
-                  size: 30,
-                ),
+              PopupMenuItem(
+                child: Text('New Team'),
+                value: Item.item2,
+              ),
+              PopupMenuItem(
+                child: Text('Delete Account'),
+                value: Item.item3,
+              ),
+              PopupMenuItem(
+                child: Text('Log out'),
+                value: Item.item4,
               ),
             ],
-          )
+          ),
         ],
       ),
       body: GestureDetector(
@@ -315,14 +308,19 @@ class _MainPlayerState extends State<MainPlayer> {
                                 (doc) => Card(
                                   child: ListTile(
                                     leading: CircleAvatar(
-                                      child: Text(
-                                        doc['position'].toString(),
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold),
+                                      child: FittedBox(
+                                        alignment: Alignment.centerLeft,
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          doc['position'].toString(),
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                      backgroundColor: Colors.lightBlueAccent,
+                                      backgroundColor:
+                                          Colors.blueAccent.shade200,
                                     ),
                                     title: FittedBox(
                                       alignment: Alignment.centerLeft,

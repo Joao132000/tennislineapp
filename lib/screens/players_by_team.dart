@@ -267,14 +267,18 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                   child: Card(
                       child: ListTile(
                     leading: CircleAvatar(
-                      child: Text(
-                        doc['position'].toString(),
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
+                      child: FittedBox(
+                        alignment: Alignment.centerLeft,
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          doc['position'].toString(),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      backgroundColor: Colors.lightBlueAccent,
+                      backgroundColor: Colors.blueAccent.shade200,
                     ),
                     title: FittedBox(
                       alignment: Alignment.centerLeft,

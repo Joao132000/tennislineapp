@@ -46,19 +46,10 @@ class _IntroPlayerState extends State<IntroPlayer> {
               ),
               Text(
                 'Click next or swipe right to navigate through this tutorial. You can also skip '
-                'and take a look at it later, just hit the light on the top of your screen.',
+                'and take a look at it later, the tutorial is under the options on the main screen.',
                 style: TextStyle(
                   fontSize: 15,
                 ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Image.asset(
-                'assets/images/tutorial_light.png',
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
               ),
             ],
           ),
