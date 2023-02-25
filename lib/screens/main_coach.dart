@@ -8,6 +8,7 @@ import 'package:tennislineapp/handlers/admob_service.dart';
 import 'package:tennislineapp/handlers/signin_signout.dart';
 import 'package:tennislineapp/screens/players_by_team.dart';
 
+import '../handlers/MenuItem.dart';
 import '../models/coach.dart';
 import 'intro_coach.dart';
 import 'new_team.dart';
@@ -44,85 +45,86 @@ class _MainCoachState extends State<MainCoach> {
         title: Text('Teams'),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => IntroCoach(),
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.lightbulb,
-              size: 30,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(
-                    'Would like to remove you account permanently?\nIt is not possible to undo this action.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                    ),
+          PopupMenuButton<Item>(
+            onSelected: (value) async {
+              if (value == Item.item1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IntroCoach(),
                   ),
-                  actions: [
-                    Row(
-                      children: [
-                        TextButton(
-                          child: const Text(
-                            'Confirm',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                            ),
-                          ),
-                          onPressed: () {
-                            FirebaseAuth.instance.currentUser!.delete();
-                            final deleteDoc = FirebaseFirestore.instance
-                                .collection('coach')
-                                .doc(FirebaseAuth.instance.currentUser!.uid);
-                            setState(() {
-                              deleteDoc.delete();
-                            });
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignInSignOut()),
-                            );
-                          },
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ],
+                );
+              } else if (value == Item.item2) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Would like to remove you account permanently?\nIt is not possible to undo this action.',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
                     ),
-                  ],
-                ),
-              );
+                    actions: [
+                      Row(
+                        children: [
+                          TextButton(
+                            child: const Text(
+                              'Confirm',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                            ),
+                            onPressed: () {
+                              FirebaseAuth.instance.currentUser!.delete();
+                              final deleteDoc = FirebaseFirestore.instance
+                                  .collection('player')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid);
+                              setState(() {
+                                deleteDoc.delete();
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SignInSignOut()),
+                              );
+                            },
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              } else if (value == Item.item3) {
+                FirebaseAuth.instance.signOut();
+              }
             },
-            icon: const Icon(
-              Icons.cancel_outlined,
-              size: 30,
-            ),
-          ),
-          IconButton(
-            onPressed: () => FirebaseAuth.instance.signOut(),
-            icon: const Icon(
-              Icons.logout,
-              size: 30,
-            ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text('Tutorial'),
+                value: Item.item1,
+              ),
+              PopupMenuItem(
+                child: Text('Delete Account'),
+                value: Item.item2,
+              ),
+              PopupMenuItem(
+                child: Text('Log out'),
+                value: Item.item3,
+              ),
+            ],
           ),
         ],
       ),
