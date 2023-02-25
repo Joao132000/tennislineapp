@@ -94,6 +94,7 @@ class _MainPlayerState extends State<MainPlayer> {
         automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<Item>(
+            icon: Icon(Icons.menu),
             onSelected: (value) async {
               if (value == Item.item1) {
                 Navigator.push(
