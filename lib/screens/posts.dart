@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../handlers/notification.dart';
 import '../models/post.dart';
 import '../models/team.dart';
 
@@ -202,7 +201,10 @@ class _PostsState extends State<Posts> {
                                     .get()
                                     .then((QuerySnapshot snapshot) {
                                   snapshot.docs.forEach((element) {
-                                    sendPushMessage(element['token']);
+                                    NotificationPush.sendPushMessage(
+                                        element['token'],
+                                        widget.userName,
+                                        messageForNotification);
                                   });
                                 });
                                 final docTeam = FirebaseFirestore.instance
@@ -216,7 +218,10 @@ class _PostsState extends State<Posts> {
                                     .get()
                                     .then((QuerySnapshot snapshot) {
                                   snapshot.docs.forEach((element) {
-                                    sendPushMessage(element['token']);
+                                    NotificationPush.sendPushMessage(
+                                        element['token'],
+                                        widget.userName,
+                                        messageForNotification);
                                   });
                                 });
                               }
@@ -236,35 +241,5 @@ class _PostsState extends State<Posts> {
         },
       ),
     );
-  }
-
-  void sendPushMessage(String token) async {
-    try {
-      await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-            'Authorization':
-                'key=AAAAVCxeRzE:APA91bFxdrbqpLSAl-_iKGjL9sQkeTCmcZPTIS5_cYS6n95SY-dPeB7S7fPIwu43H-aFu1HxoP__BGtya4toyHqLZpPCvoLSjt7RVwCp0W3uQdvvOXXT14nxakxYojU9tdePPaFm_6j7',
-          },
-          body: jsonEncode(<String, dynamic>{
-            'priority': 'high',
-            'data': <String, dynamic>{
-              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-              'status': 'done',
-              'body': messageForNotification,
-              'title': widget.userName,
-            },
-            'notification': <String, dynamic>{
-              'body': messageForNotification,
-              'title': widget.userName,
-              'android_channel_id': 'channelID'
-            },
-            'to': token,
-          }));
-    } catch (e) {
-      if (kDebugMode) {
-        print('error');
-      }
-    }
   }
 }

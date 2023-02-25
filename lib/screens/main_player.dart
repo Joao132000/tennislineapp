@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:http/http.dart' as http;
 import 'package:tennislineapp/handlers/MenuItem.dart';
 import 'package:tennislineapp/handlers/utils.dart';
 import 'package:tennislineapp/screens/doubles_player_view.dart';
@@ -14,6 +11,7 @@ import 'package:tennislineapp/screens/intro_player.dart';
 import 'package:tennislineapp/screens/posts.dart';
 
 import '../handlers/admob_service.dart';
+import '../handlers/notification.dart';
 import '../handlers/signin_signout.dart';
 import '../models/match.dart';
 import '../models/player.dart';
@@ -382,6 +380,12 @@ class _MainPlayerState extends State<MainPlayer> {
                                                               ),
                                                             ),
                                                             onPressed: () {
+                                                              final String
+                                                                  pushTitle =
+                                                                  "New Challenge!!!";
+                                                              final String
+                                                                  pushBody =
+                                                                  '${p?.name} is challenging you!';
                                                               Navigator.pop(
                                                                   context);
                                                               final playerChallenged =
@@ -415,8 +419,11 @@ class _MainPlayerState extends State<MainPlayer> {
                                                                   doc['id'],
                                                                   doc['name'],
                                                                   doc['position']);
-                                                              sendPushMessage(
-                                                                  doc['token']);
+                                                              NotificationPush
+                                                                  .sendPushMessage(
+                                                                      doc['token'],
+                                                                      pushTitle,
+                                                                      pushBody);
                                                             },
                                                           ),
                                                           TextButton(
@@ -600,35 +607,5 @@ class _MainPlayerState extends State<MainPlayer> {
     );
     final json = match.toJson();
     await docMatch.set(json);
-  }
-
-  void sendPushMessage(String token) async {
-    try {
-      await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-            'Authorization':
-                'key=	AAAAVCxeRzE:APA91bFxdrbqpLSAl-_iKGjL9sQkeTCmcZPTIS5_cYS6n95SY-dPeB7S7fPIwu43H-aFu1HxoP__BGtya4toyHqLZpPCvoLSjt7RVwCp0W3uQdvvOXXT14nxakxYojU9tdePPaFm_6j7',
-          },
-          body: jsonEncode(<String, dynamic>{
-            'priority': 'high',
-            'data': <String, dynamic>{
-              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-              'status': 'done',
-              'body': '${p?.name} is challenging you!',
-              'title': 'New Challenge!',
-            },
-            'notification': <String, dynamic>{
-              'body': '${p?.name} is challenging you!',
-              'title': 'New Challenge!',
-              'android_channel_id': 'channelID'
-            },
-            'to': token,
-          }));
-    } catch (e) {
-      if (kDebugMode) {
-        print('error');
-      }
-    }
   }
 }
