@@ -78,13 +78,13 @@ class _MainCoachState extends State<MainCoach> {
                               ),
                             ),
                             onPressed: () {
-                              FirebaseAuth.instance.currentUser!.delete();
                               final deleteDoc = FirebaseFirestore.instance
                                   .collection('coach')
                                   .doc(FirebaseAuth.instance.currentUser!.uid);
                               setState(() {
                                 deleteDoc.delete();
                               });
+                              FirebaseAuth.instance.currentUser!.delete();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

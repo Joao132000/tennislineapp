@@ -25,6 +25,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
   String formattedDate = '';
   String? winner;
   String? radioButton;
+  var playerNameFilter = 'All';
   var itemsType = [
     "Singles",
     "Doubles",
@@ -55,7 +56,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
               });
             },
             child: FutureBuilder<QuerySnapshot>(
-                future: (true)?read():read(),
+                future: (playerNameFilter == "All") ? read() : mergeQueries(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final List<DocumentSnapshot> documents =
@@ -75,28 +76,88 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 20,
-                            ),
-                            DropdownButton(
-                              alignment: AlignmentDirectional.bottomStart,
-                              value: dropDownType,
-                              icon: const Icon(Icons.keyboard_arrow_down),
-                              items: itemsType.map((String items) {
-                                return DropdownMenuItem(
-                                  value: items,
-                                  child: Text(items),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropDownType = newValue!;
-                                });
-                              },
-                            ),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DropdownButton(
+                                alignment: AlignmentDirectional.bottomStart,
+                                value: dropDownType,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: itemsType.map((String items) {
+                                  return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(items),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    dropDownType = newValue!;
+                                  });
+                                },
+                              ),
+                              /*StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('player')
+                                    .where('teamId', isEqualTo: widget.teamId)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else {
+                                    List<DropdownMenuItem> items = [];
+                                    items.add(
+                                      DropdownMenuItem(
+                                        child: Text(
+                                          'All',
+                                        ),
+                                        value: 'All',
+                                      ),
+                                    );
+                                    for (int i = 0;
+                                        i < snapshot.data!.docs.length;
+                                        i++) {
+                                      DocumentSnapshot snap =
+                                          snapshot.data!.docs[i];
+                                      items.add(
+                                        DropdownMenuItem(
+                                          child: Text(
+                                            snap['name'],
+                                          ),
+                                          value: snap['name'],
+                                        ),
+                                      );
+                                    }
+                                    return Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            DropdownButton(
+                                              menuMaxHeight: 200,
+                                              items: items,
+                                              onChanged: (dynamic value) {
+                                                setState(() {
+                                                  playerNameFilter = value;
+                                                });
+                                              },
+                                              value: playerNameFilter,
+                                              isExpanded: false,
+                                              hint: Text('Choose a player'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),*/
+                            ],
+                          ),
                         ),
                         Expanded(
                           child: ListView(
@@ -907,18 +968,26 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         .where('checkSinglesDoubles', isEqualTo: dropDownType)
         .get();
   }
+
+  Future<QuerySnapshot> mergeQueries() async {
+    QuerySnapshot query1 = await FirebaseFirestore.instance
+        .collection('practice')
+        .orderBy('timeStamp', descending: true)
+        .where('teamId', isEqualTo: widget.teamId)
+        .where('checkSinglesDoubles', isEqualTo: dropDownType)
+        .where('player1name', isEqualTo: playerNameFilter)
+        .get();
+
+    QuerySnapshot query2 = await FirebaseFirestore.instance
+        .collection('practice')
+        .orderBy('timeStamp', descending: true)
+        .where('teamId', isEqualTo: widget.teamId)
+        .where('checkSinglesDoubles', isEqualTo: dropDownType)
+        .where('player2name', isEqualTo: playerNameFilter)
+        .get();
+
+    query1.docs.addAll(query2.docs);
+
+    return query1;
+  }
 }
-
-/*String searchQuery = 'john';
-
-FirebaseFirestore.instance
-  .collection('users')
-  .where('name', isGreaterThanOrEqualTo: searchQuery.toLowerCase())
-  .where('name', isLessThan: searchQuery.toLowerCase() + '\uffff')
-  .get()
-  .then((querySnapshot) {
-    querySnapshot.docs.forEach((doc) {
-      print(doc.data());
-    });
-});
-*/

@@ -1,22 +1,23 @@
 import 'dart:io' show Platform;
+
 import 'package:flutter/cupertino.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdMobService {
   static String? get bannerAdUnit {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-7706650657314375/1206438130';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return 'ca-app-pub-7706650657314375/6624370050';
     }
     return null;
   }
 
   static String? get interstitialAdUnit {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/1033173712';
+      return 'ca-app-pub-7706650657314375/2086876167';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/4411468910';
+      return 'ca-app-pub-7706650657314375/9058961706';
     }
     return null;
   }

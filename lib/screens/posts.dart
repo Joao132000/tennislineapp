@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -201,10 +202,14 @@ class _PostsState extends State<Posts> {
                                     .get()
                                     .then((QuerySnapshot snapshot) {
                                   snapshot.docs.forEach((element) {
-                                    NotificationPush.sendPushMessage(
-                                        element['token'],
-                                        widget.userName,
-                                        messageForNotification);
+                                    if (FirebaseAuth
+                                            .instance.currentUser!.uid !=
+                                        element['id']) {
+                                      NotificationPush.sendPushMessage(
+                                          element['token'],
+                                          widget.userName,
+                                          messageForNotification);
+                                    }
                                   });
                                 });
                                 final docTeam = FirebaseFirestore.instance
@@ -218,10 +223,14 @@ class _PostsState extends State<Posts> {
                                     .get()
                                     .then((QuerySnapshot snapshot) {
                                   snapshot.docs.forEach((element) {
-                                    NotificationPush.sendPushMessage(
-                                        element['token'],
-                                        widget.userName,
-                                        messageForNotification);
+                                    if (FirebaseAuth
+                                            .instance.currentUser!.uid !=
+                                        element['id']) {
+                                      NotificationPush.sendPushMessage(
+                                          element['token'],
+                                          widget.userName,
+                                          messageForNotification);
+                                    }
                                   });
                                 });
                               }
