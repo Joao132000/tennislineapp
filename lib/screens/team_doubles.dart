@@ -7,15 +7,13 @@ class TeamDoubles extends StatefulWidget {
   final String teamId;
   final String teamSchool;
   final String teamType;
-  final String teamLeague;
 
-  const TeamDoubles(
-      {Key? key,
-      required this.teamId,
-      required this.teamSchool,
-      required this.teamType,
-      required this.teamLeague})
-      : super(key: key);
+  const TeamDoubles({
+    Key? key,
+    required this.teamId,
+    required this.teamSchool,
+    required this.teamType,
+  }) : super(key: key);
 
   @override
   State<TeamDoubles> createState() => _TeamDoublesState();
@@ -63,11 +61,6 @@ class _TeamDoublesState extends State<TeamDoubles> {
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 25,
-                          )),
-                      Text(widget.teamLeague,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
                           )),
                       Text('Doubles ${widget.teamType}',
                           style: const TextStyle(

@@ -264,7 +264,6 @@ class _MainPlayerState extends State<MainPlayer> {
                   teamId: p!.teamId,
                   teamSchool: university!,
                   teamType: type!,
-                  teamLeague: league!,
                 ),
               ),
             );
@@ -291,7 +290,7 @@ class _MainPlayerState extends State<MainPlayer> {
                             fontWeight: FontWeight.w600,
                             fontSize: 25,
                           )),
-                      Text('${type!}\n${league!}',
+                      Text('Singles ${type!}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,

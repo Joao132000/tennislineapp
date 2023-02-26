@@ -1,111 +1,134 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../handlers/admob_service.dart';
 
 class DoublesPlayerView extends StatefulWidget {
   final String teamId;
   final String teamSchool;
   final String teamType;
-  final String teamLeague;
 
-  const DoublesPlayerView(
-      {Key? key,
-      required this.teamId,
-      required this.teamSchool,
-      required this.teamType,
-      required this.teamLeague})
-      : super(key: key);
+  const DoublesPlayerView({
+    Key? key,
+    required this.teamId,
+    required this.teamSchool,
+    required this.teamType,
+  }) : super(key: key);
 
   @override
   State<DoublesPlayerView> createState() => _DoublesPlayerViewState();
 }
 
 class _DoublesPlayerViewState extends State<DoublesPlayerView> {
+  BannerAd? banner;
+  @override
+  void initState() {
+    super.initState();
+    createBannerAd();
+  }
+
+  void createBannerAd() {
+    banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnit!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Doubles Lineup'),
-        automaticallyImplyLeading: false,
-      ),
-      body: GestureDetector(
-        onPanUpdate: (details) {
-          if (details.delta.dx > 0) {
-            Navigator.pop(context);
-          }
-        },
-        child: RefreshIndicator(
-          onRefresh: () {
-            return Future(() {
-              setState(() {});
-            });
+        appBar: AppBar(
+          title: const Text('Doubles Lineup'),
+          automaticallyImplyLeading: false,
+        ),
+        body: GestureDetector(
+          onPanUpdate: (details) {
+            if (details.delta.dx > 0) {
+              Navigator.pop(context);
+            }
           },
-          child: FutureBuilder<QuerySnapshot>(
-              future: read(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data!.size == 0) {
-                    return AlertDialog(
-                      content: Text('No doubles for this team yet!'),
-                      actions: [
-                        IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: Icon(Icons.arrow_back))
+          child: RefreshIndicator(
+            onRefresh: () {
+              return Future(() {
+                setState(() {});
+              });
+            },
+            child: FutureBuilder<QuerySnapshot>(
+                future: read(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.size == 0) {
+                      return AlertDialog(
+                        content: Text('No doubles for this team yet!'),
+                        actions: [
+                          IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: Icon(Icons.arrow_back))
+                        ],
+                      );
+                    }
+                    final List<DocumentSnapshot> documents =
+                        snapshot.data!.docs;
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(widget.teamSchool,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 25,
+                            )),
+                        Text('Doubles ${widget.teamType}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            )),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                          child: buildListView(documents, context),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              '<-- Swipe to see singles lineup',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
                       ],
                     );
+                  } else if (snapshot.hasError) {
+                    return const Text('Its Error!');
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
-                  final List<DocumentSnapshot> documents = snapshot.data!.docs;
-                  return Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text(widget.teamSchool,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25,
-                          )),
-                      Text('Doubles ${widget.teamType}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          )),
-                      Text(widget.teamLeague,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          )),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Expanded(
-                        child: buildListView(documents, context),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            '<-- Swipe to see singles lineup',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return const Text('Its Error!');
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
+                }),
+          ),
         ),
-      ));
+        bottomNavigationBar: banner == null
+            ? Container()
+            : Container(
+                margin: EdgeInsets.only(bottom: 2),
+                height: 50,
+                child: AdWidget(
+                  ad: banner!,
+                ),
+              ),
+      );
 
   ListView buildListView(
       List<DocumentSnapshot<Object?>> documents, BuildContext context) {

@@ -55,7 +55,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
               });
             },
             child: FutureBuilder<QuerySnapshot>(
-                future: read(),
+                future: (true)?read():read(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final List<DocumentSnapshot> documents =
@@ -908,3 +908,17 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         .get();
   }
 }
+
+/*String searchQuery = 'john';
+
+FirebaseFirestore.instance
+  .collection('users')
+  .where('name', isGreaterThanOrEqualTo: searchQuery.toLowerCase())
+  .where('name', isLessThan: searchQuery.toLowerCase() + '\uffff')
+  .get()
+  .then((querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      print(doc.data());
+    });
+});
+*/
