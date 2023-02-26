@@ -53,7 +53,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                   teamId: widget.teamId,
                   teamSchool: widget.teamSchool,
                   teamType: widget.teamType,
-                  teamLeague: widget.teamLeague,
                 ),
               ),
             );
@@ -80,12 +79,7 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                             fontWeight: FontWeight.w600,
                             fontSize: 25,
                           )),
-                      Text(widget.teamLeague,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          )),
-                      Text(widget.teamType,
+                      Text('Singles ${widget.teamType}',
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 20,

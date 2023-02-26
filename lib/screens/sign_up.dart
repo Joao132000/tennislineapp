@@ -10,7 +10,9 @@ import 'package:tennislineapp/models/coach.dart';
 import 'package:tennislineapp/screens/intro_coach.dart';
 import 'package:tennislineapp/screens/intro_player.dart';
 
+import '../handlers/notification.dart';
 import '../models/player.dart';
+import '../models/team.dart';
 
 class SignUp extends StatefulWidget {
   final VoidCallback onClickedSignIn;
@@ -67,7 +69,8 @@ class _SignUpState extends State<SignUp> {
             TextField(
               controller: nameController,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration:
+                  const InputDecoration(labelText: 'First and Last Name'),
             ),
             const SizedBox(height: 5),
             TextField(
@@ -193,7 +196,7 @@ class _SignUpState extends State<SignUp> {
       FirebaseAuth.instance.signOut();
       signInButton();
     });
-    Utils.showSnackBar('Wait a moment please...');
+    Utils.showSnackBarBlue('Wait a moment please...');
   }
 
   Future signUpButton() async {
@@ -223,9 +226,14 @@ class _SignUpState extends State<SignUp> {
               password: passwordController1.text.trim(),
             );
             savePlayer();
+            final String title = 'New player!';
+            final String body =
+                '${nameController.text} has just registered in one of your teams!';
+            final String token = await getCoachId();
             user.user?.updateDisplayName('2');
             wait();
             requestPermission();
+            NotificationPush.sendPushMessage(token, title, body);
           } else {
             Utils.showSnackBar('Please check your password or team code');
           }
@@ -236,6 +244,22 @@ class _SignUpState extends State<SignUp> {
     } on FirebaseAuthException catch (e) {
       Utils.showSnackBar(e.message);
     }
+  }
+
+  Future<String> getCoachId() async {
+    final docTeam = FirebaseFirestore.instance
+        .collection("team")
+        .doc(teamIdController.text.trim());
+    final snapshot = await docTeam.get();
+    final team = Team.fromJson(snapshot.data()!);
+    final String coachId = team.coachId;
+
+    final docCoach =
+        FirebaseFirestore.instance.collection("coach").doc(coachId);
+    final snapshotCoach = await docCoach.get();
+    final coach = Coach.fromJson(snapshotCoach.data()!);
+    final String coachToken = coach.token;
+    return coachToken;
   }
 
   bool checkTeam = false;

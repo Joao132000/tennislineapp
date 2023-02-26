@@ -20,6 +20,8 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
   final resultController = TextEditingController();
   var selectedPlayer1;
   var selectedPlayer2;
+  var selectedPlayer3;
+  var selectedPlayer4;
   String formattedDate = '';
   String? winner;
   String? radioButton;
@@ -53,7 +55,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
               });
             },
             child: FutureBuilder<QuerySnapshot>(
-                future: read(),
+                future: (true)?read():read(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final List<DocumentSnapshot> documents =
@@ -261,7 +263,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                               .format(Timestamp
                                                                       .now()
                                                                   .toDate());
-                                                          saveMatch();
+                                                          saveMatchSingles();
                                                           Navigator.pop(
                                                               context);
                                                           selectedPlayer1 =
@@ -339,7 +341,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                 StreamBuilder<QuerySnapshot>(
                                                   stream: FirebaseFirestore
                                                       .instance
-                                                      .collection('doubles')
+                                                      .collection('player')
                                                       .where('teamId',
                                                           isEqualTo:
                                                               widget.teamId)
@@ -364,10 +366,9 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                         items.add(
                                                           DropdownMenuItem(
                                                             child: Text(
-                                                              snap['players'],
+                                                              snap['name'],
                                                             ),
-                                                            value:
-                                                                snap['players'],
+                                                            value: snap['name'],
                                                           ),
                                                         );
                                                       }
@@ -378,6 +379,8 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
+                                                              Text(
+                                                                  "Doubles 1: "),
                                                               DropdownButton(
                                                                 menuMaxHeight:
                                                                     200,
@@ -395,7 +398,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                                 isExpanded:
                                                                     false,
                                                                 hint: Text(
-                                                                    'Choose a double'),
+                                                                    'Choose a player'),
                                                               ),
                                                             ],
                                                           ),
@@ -404,6 +407,8 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
+                                                              Text(
+                                                                  "Doubles 1: "),
                                                               DropdownButton(
                                                                 menuMaxHeight:
                                                                     200,
@@ -421,7 +426,63 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                                 isExpanded:
                                                                     false,
                                                                 hint: Text(
-                                                                    'Choose a double'),
+                                                                    'Choose a player'),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                  "Doubles 2: "),
+                                                              DropdownButton(
+                                                                menuMaxHeight:
+                                                                    200,
+                                                                items: items,
+                                                                onChanged:
+                                                                    (dynamic
+                                                                        value) {
+                                                                  setState(() {
+                                                                    selectedPlayer3 =
+                                                                        value;
+                                                                  });
+                                                                },
+                                                                value:
+                                                                    selectedPlayer3,
+                                                                isExpanded:
+                                                                    false,
+                                                                hint: Text(
+                                                                    'Choose a player'),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                  "Doubles 2: "),
+                                                              DropdownButton(
+                                                                menuMaxHeight:
+                                                                    200,
+                                                                items: items,
+                                                                onChanged:
+                                                                    (dynamic
+                                                                        value) {
+                                                                  setState(() {
+                                                                    selectedPlayer4 =
+                                                                        value;
+                                                                  });
+                                                                },
+                                                                value:
+                                                                    selectedPlayer4,
+                                                                isExpanded:
+                                                                    false,
+                                                                hint: Text(
+                                                                    'Choose a player'),
                                                               ),
                                                             ],
                                                           ),
@@ -439,9 +500,23 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                 TextButton(
                                                   onPressed: ((selectedPlayer1 !=
                                                               selectedPlayer2) &&
+                                                          (selectedPlayer1 !=
+                                                              selectedPlayer3) &&
+                                                          (selectedPlayer1 !=
+                                                              selectedPlayer4) &&
+                                                          (selectedPlayer2 !=
+                                                              selectedPlayer3) &&
+                                                          (selectedPlayer3 !=
+                                                              selectedPlayer4) &&
+                                                          (selectedPlayer2 !=
+                                                              selectedPlayer4) &&
                                                           (selectedPlayer2 !=
                                                               null) &&
                                                           (selectedPlayer1 !=
+                                                              null) &&
+                                                          (selectedPlayer3 !=
+                                                              null) &&
+                                                          (selectedPlayer4 !=
                                                               null))
                                                       ? () {
                                                           check = 'Doubles';
@@ -450,12 +525,16 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                               .format(Timestamp
                                                                       .now()
                                                                   .toDate());
-                                                          saveMatch();
+                                                          saveMatchDoubles();
                                                           Navigator.pop(
                                                               context);
                                                           selectedPlayer1 =
                                                               null;
                                                           selectedPlayer2 =
+                                                              null;
+                                                          selectedPlayer3 =
+                                                              null;
+                                                          selectedPlayer4 =
                                                               null;
                                                         }
                                                       : null,
@@ -472,6 +551,8 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                     selectedPlayer1 = null;
+                                                    selectedPlayer3 = null;
+                                                    selectedPlayer4 = null;
                                                     selectedPlayer2 = null;
                                                   },
                                                   child: const Text(
@@ -581,7 +662,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         ],
       ),
       child: Card(
-        color: ((doc['result']) != "") ? Colors.green : null,
+        color: ((doc['winner']) != "") ? Colors.green : null,
         child: ListTile(
           title: (doc['checkSinglesDoubles'] == 'Singles')
               ? Column(
@@ -718,8 +799,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  if ((resultController.text != "") &&
-                                      (radioButton != null)) {
+                                  if (resultController.text != "") {
                                     final updateDoc = FirebaseFirestore.instance
                                         .collection('practice')
                                         .doc(doc['id']);
@@ -734,7 +814,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                           'winner': doc['player1name'],
                                         });
                                       });
-                                    } else {
+                                    } else if (radioButton == 'player2') {
                                       setState(() {
                                         updateDoc.update({
                                           'winner': doc['player2name'],
@@ -752,6 +832,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                       ),
                                     );
                                   }
+                                  radioButton = null;
                                   winner = '';
                                   resultController.text = '';
                                 }),
@@ -759,6 +840,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                 onPressed: () {
                                   winner = '';
                                   resultController.text = '';
+                                  radioButton = null;
                                   Navigator.pop(context);
                                 },
                                 child: const Text('Cancel',
@@ -781,7 +863,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
     );
   }
 
-  Future saveMatch() async {
+  Future saveMatchSingles() async {
     final docSinglesMatch =
         FirebaseFirestore.instance.collection('practice').doc();
     final practice = Practice(
@@ -799,6 +881,24 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
     await docSinglesMatch.set(json);
   }
 
+  Future saveMatchDoubles() async {
+    final docDoublesMatch =
+        FirebaseFirestore.instance.collection('practice').doc();
+    final practice = Practice(
+      id: docDoublesMatch.id,
+      teamId: widget.teamId,
+      player1name: "${selectedPlayer1}/${selectedPlayer2}",
+      player2name: "${selectedPlayer3}/${selectedPlayer4}",
+      result: '',
+      timeStamp: Timestamp.now(),
+      winner: '',
+      checkSinglesDoubles: check,
+      date: formattedDate,
+    );
+    final json = practice.toJson();
+    await docDoublesMatch.set(json);
+  }
+
   Future<QuerySnapshot<Object?>>? read() async {
     return await FirebaseFirestore.instance
         .collection('practice')
@@ -808,3 +908,17 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         .get();
   }
 }
+
+/*String searchQuery = 'john';
+
+FirebaseFirestore.instance
+  .collection('users')
+  .where('name', isGreaterThanOrEqualTo: searchQuery.toLowerCase())
+  .where('name', isLessThan: searchQuery.toLowerCase() + '\uffff')
+  .get()
+  .then((querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      print(doc.data());
+    });
+});
+*/

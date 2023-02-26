@@ -30,7 +30,7 @@ class _NewTeamState extends State<NewTeam> {
   }
 
   String dropDownType = "Men's Team";
-  String dropDownPosition = '2';
+  String dropDownPosition = '1';
 
   var itemsPosition = [
     '1',
@@ -38,6 +38,7 @@ class _NewTeamState extends State<NewTeam> {
     '3',
     '4',
     '5',
+    '6',
   ];
 
   // List of items in our dropdown menu
@@ -46,9 +47,8 @@ class _NewTeamState extends State<NewTeam> {
     "Women's Team",
     "Boy's Team",
     "Girl's Team",
-    "Men's Senior",
-    "Women's Senior",
-    'Overall',
+    "Men's JV Team",
+    "Women's JV Team",
   ];
   BannerAd? banner;
   @override
@@ -96,7 +96,8 @@ class _NewTeamState extends State<NewTeam> {
               TextField(
                 controller: leagueController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'League'),
+                decoration:
+                    const InputDecoration(labelText: 'League/Conference'),
               ),
               const SizedBox(height: 10),
               Row(

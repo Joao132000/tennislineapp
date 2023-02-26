@@ -42,10 +42,11 @@ class _MainCoachState extends State<MainCoach> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Teams'),
+        title: Text('Hey coach, welcome back!'),
         automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<Item>(
+            icon: Icon(Icons.menu),
             onSelected: (value) async {
               if (value == Item.item1) {
                 Navigator.push(
@@ -79,7 +80,7 @@ class _MainCoachState extends State<MainCoach> {
                             onPressed: () {
                               FirebaseAuth.instance.currentUser!.delete();
                               final deleteDoc = FirebaseFirestore.instance
-                                  .collection('player')
+                                  .collection('coach')
                                   .doc(FirebaseAuth.instance.currentUser!.uid);
                               setState(() {
                                 deleteDoc.delete();
@@ -136,7 +137,17 @@ class _MainCoachState extends State<MainCoach> {
               return Column(
                 children: [
                   const SizedBox(
-                    height: 15,
+                    height: 20,
+                  ),
+                  Text(
+                    "Teams",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Expanded(
                     child: ListView(
