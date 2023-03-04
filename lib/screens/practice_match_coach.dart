@@ -56,11 +56,23 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
               });
             },
             child: FutureBuilder<QuerySnapshot>(
-                future: (playerNameFilter == "All") ? read() : mergeQueries(),
+                future: read(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final List<DocumentSnapshot> documents =
-                        snapshot.data!.docs;
+                    List dataList =
+                        snapshot.data!.docs.map((e) => e.data()).toList();
+                    List dataListPlayer = dataList
+                        .where((element) =>
+                            element['player1name'].contains(playerNameFilter))
+                        .toList();
+                    List dataListPlayerMerge = dataList
+                        .where((element) =>
+                            element['player2name'].contains(playerNameFilter))
+                        .toList();
+                    dataListPlayer.addAll(dataListPlayerMerge);
+                    dataListPlayer.sort(
+                        (a, b) => b['timeStamp'].compareTo(a['timeStamp']));
+
                     return Column(
                       children: [
                         const SizedBox(
@@ -97,7 +109,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                   });
                                 },
                               ),
-                              /*StreamBuilder<QuerySnapshot>(
+                              StreamBuilder<QuerySnapshot>(
                                 stream: FirebaseFirestore.instance
                                     .collection('player')
                                     .where('teamId', isEqualTo: widget.teamId)
@@ -147,7 +159,6 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                               },
                                               value: playerNameFilter,
                                               isExpanded: false,
-                                              hint: Text('Choose a player'),
                                             ),
                                           ],
                                         ),
@@ -155,15 +166,25 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                     );
                                   }
                                 },
-                              ),*/
+                              ),
                             ],
                           ),
                         ),
                         Expanded(
-                          child: ListView(
-                              children: documents
-                                  .map((doc) => buildCard(context, doc))
-                                  .toList()),
+                          child: ListView.builder(
+                            itemCount: (playerNameFilter == "All")
+                                ? dataList.length
+                                : dataListPlayer.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final doc;
+                              if (playerNameFilter == "All") {
+                                doc = dataList[index];
+                              } else {
+                                doc = dataListPlayer[index];
+                              }
+                              return buildCard(context, doc);
+                            },
+                          ),
                         ),
                         Column(
                           children: [
@@ -663,7 +684,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         ),
       );
 
-  Slidable buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {
+  Slidable buildCard(BuildContext context, Map<String, dynamic> doc) {
     return Slidable(
       endActionPane: ActionPane(
         motion: ScrollMotion(),
@@ -967,27 +988,5 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         .where('teamId', isEqualTo: widget.teamId)
         .where('checkSinglesDoubles', isEqualTo: dropDownType)
         .get();
-  }
-
-  Future<QuerySnapshot> mergeQueries() async {
-    QuerySnapshot query1 = await FirebaseFirestore.instance
-        .collection('practice')
-        .orderBy('timeStamp', descending: true)
-        .where('teamId', isEqualTo: widget.teamId)
-        .where('checkSinglesDoubles', isEqualTo: dropDownType)
-        .where('player1name', isEqualTo: playerNameFilter)
-        .get();
-
-    QuerySnapshot query2 = await FirebaseFirestore.instance
-        .collection('practice')
-        .orderBy('timeStamp', descending: true)
-        .where('teamId', isEqualTo: widget.teamId)
-        .where('checkSinglesDoubles', isEqualTo: dropDownType)
-        .where('player2name', isEqualTo: playerNameFilter)
-        .get();
-
-    query1.docs.addAll(query2.docs);
-
-    return query1;
   }
 }

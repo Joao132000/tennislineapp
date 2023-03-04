@@ -23,6 +23,8 @@ class MainCoach extends StatefulWidget {
 class _MainCoachState extends State<MainCoach> {
   Coach? coach;
   BannerAd? banner;
+  final id = FirebaseAuth.instance.currentUser!;
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +62,7 @@ class _MainCoachState extends State<MainCoach> {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text(
-                      'Would like to remove you account permanently?\nIt is not possible to undo this action.',
+                      'Would like to remove your account permanently?\nIt is not possible to undo this action.',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 20,
@@ -80,11 +82,11 @@ class _MainCoachState extends State<MainCoach> {
                             onPressed: () {
                               final deleteDoc = FirebaseFirestore.instance
                                   .collection('coach')
-                                  .doc(FirebaseAuth.instance.currentUser!.uid);
+                                  .doc(id.uid);
                               setState(() {
                                 deleteDoc.delete();
                               });
-                              FirebaseAuth.instance.currentUser!.delete();
+                              id.delete();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

@@ -102,12 +102,12 @@ class _MatchesState extends State<Matches> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                SizedBox(
-                                  width: 20,
-                                ),
                                 Text(
                                   'Swipe to see practice matches -->',
                                   style: TextStyle(color: Colors.grey),
+                                ),
+                                SizedBox(
+                                  width: 20,
                                 ),
                               ],
                             ),

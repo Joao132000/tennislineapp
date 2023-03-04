@@ -32,6 +32,7 @@ class _MainPlayerState extends State<MainPlayer> {
   final newTeamCodeController = TextEditingController();
   bool checkTeam = false;
   Random random = new Random();
+  final id = FirebaseAuth.instance.currentUser!;
 
   Future checkTeamFunc() async {
     if (newTeamCodeController.text != "") {
@@ -181,7 +182,7 @@ class _MainPlayerState extends State<MainPlayer> {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text(
-                      'Would like to remove you account permanently?\nIt is not possible to undo this action.',
+                      'Would like to remove your account permanently?\nIt is not possible to undo this action.',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 20,
@@ -201,11 +202,11 @@ class _MainPlayerState extends State<MainPlayer> {
                             onPressed: () {
                               final deleteDoc = FirebaseFirestore.instance
                                   .collection('player')
-                                  .doc(FirebaseAuth.instance.currentUser!.uid);
+                                  .doc(id.uid);
                               setState(() {
                                 deleteDoc.delete();
                               });
-                              FirebaseAuth.instance.currentUser!.delete();
+                              id.delete();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -317,8 +318,7 @@ class _MainPlayerState extends State<MainPlayer> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),
-                                      backgroundColor:
-                                          Colors.blueAccent.shade200,
+                                      backgroundColor: Colors.lightBlueAccent,
                                     ),
                                     title: FittedBox(
                                       alignment: Alignment.centerLeft,

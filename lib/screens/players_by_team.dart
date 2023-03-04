@@ -120,6 +120,34 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                                   minimumSize: const Size(150, 40),
                                   // foreground
                                 ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MatchesCoach(
+                                            teamId: widget.teamId)),
+                                  );
+                                },
+                                child: const Text(
+                                  'Team Matches',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 70,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blueAccent.shade200,
+                                  minimumSize: const Size(150, 40),
+                                  // foreground
+                                ),
                                 child: const Text(
                                   'Team Posts',
                                   style: TextStyle(
@@ -138,34 +166,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                                     ),
                                   );
                                 },
-                              ),
-                              const SizedBox(
-                                height: 70,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.blueAccent.shade200,
-                                  minimumSize: const Size(150, 40),
-                                  // foreground
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MatchesCoach(
-                                            teamId: widget.teamId)),
-                                  );
-                                },
-                                child: const Text(
-                                  'Team Matches',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
                               ),
                             ],
                           ),
@@ -272,7 +272,7 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
-                      backgroundColor: Colors.blueAccent.shade200,
+                      backgroundColor: Colors.lightBlueAccent,
                     ),
                     title: FittedBox(
                       alignment: Alignment.centerLeft,
