@@ -16,6 +16,7 @@ class MatchesCoach extends StatefulWidget {
 
 class _MatchesCoachState extends State<MatchesCoach> {
   BannerAd? banner;
+  var playerNameFilter = 'All';
   @override
   void initState() {
     super.initState();
@@ -59,8 +60,19 @@ class _MatchesCoachState extends State<MatchesCoach> {
                 future: read(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final List<DocumentSnapshot> documents =
-                        snapshot.data!.docs;
+                    List dataList =
+                        snapshot.data!.docs.map((e) => e.data()).toList();
+                    List dataListPlayer = dataList
+                        .where((element) =>
+                            element['player1name'].contains(playerNameFilter))
+                        .toList();
+                    List dataListPlayerMerge = dataList
+                        .where((element) =>
+                            element['player2name'].contains(playerNameFilter))
+                        .toList();
+                    dataListPlayer.addAll(dataListPlayerMerge);
+                    dataListPlayer.sort(
+                        (a, b) => b['timeStamp'].compareTo(a['timeStamp']));
                     return Column(
                       children: [
                         const SizedBox(
@@ -72,13 +84,93 @@ class _MatchesCoachState extends State<MatchesCoach> {
                               fontSize: 30,
                             )),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('player')
+                                    .where('teamId', isEqualTo: widget.teamId)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else {
+                                    List<DropdownMenuItem> items = [];
+                                    items.add(
+                                      DropdownMenuItem(
+                                        child: Text(
+                                          'All',
+                                        ),
+                                        value: 'All',
+                                      ),
+                                    );
+                                    for (int i = 0;
+                                        i < snapshot.data!.docs.length;
+                                        i++) {
+                                      DocumentSnapshot snap =
+                                          snapshot.data!.docs[i];
+                                      items.add(
+                                        DropdownMenuItem(
+                                          child: Text(
+                                            snap['name'],
+                                          ),
+                                          value: snap['name'],
+                                        ),
+                                      );
+                                    }
+                                    return Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            DropdownButton(
+                                              menuMaxHeight: 200,
+                                              items: items,
+                                              onChanged: (dynamic value) {
+                                                setState(() {
+                                                  playerNameFilter = value;
+                                                });
+                                              },
+                                              value: playerNameFilter,
+                                              isExpanded: false,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
                         ),
                         Expanded(
-                            child: ListView(
-                                children: documents
-                                    .map((doc) => buildCard(context, doc))
-                                    .toList())),
+                          child: ListView.builder(
+                            itemCount: (playerNameFilter == "All")
+                                ? dataList.length
+                                : dataListPlayer.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final doc;
+                              if (playerNameFilter == "All") {
+                                doc = dataList[index];
+                              } else {
+                                doc = dataListPlayer[index];
+                              }
+                              return buildCard(context, doc);
+                            },
+                          ),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -115,7 +207,7 @@ class _MatchesCoachState extends State<MatchesCoach> {
               ),
       );
 
-  Card buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {
+  Card buildCard(BuildContext context, Map<String, dynamic> doc) {
     return Card(
       color: ((doc['result']) != "") ? Colors.green : null,
       child: ListTile(

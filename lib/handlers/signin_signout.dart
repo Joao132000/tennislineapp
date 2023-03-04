@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _SignInSignOutState extends State<SignInSignOut> {
   @override
   void initState() {
     initInfo();
+    getToken();
     super.initState();
   }
 
@@ -57,6 +59,15 @@ class _SignInSignOutState extends State<SignInSignOut> {
     });
   }
 
+  String myToken = '';
+  void getToken() async {
+    await FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        myToken = token!;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,8 +75,21 @@ class _SignInSignOutState extends State<SignInSignOut> {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.data?.displayName.toString() == '2') {
+              final updateDoc = FirebaseFirestore.instance
+                  .collection('player')
+                  .doc(snapshot.data?.uid);
+              updateDoc.update({
+                'token': myToken,
+              });
               return MainPlayer();
             } else if (snapshot.data?.displayName.toString() == '1') {
+              final updateDoc = FirebaseFirestore.instance
+                  .collection('coach')
+                  .doc(snapshot.data?.uid);
+              updateDoc.update({
+                'token': myToken,
+              });
+              print(FirebaseMessaging.instance.getToken());
               return const MainCoach();
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

@@ -284,7 +284,6 @@ class _SignUpState extends State<SignUp> {
     await FirebaseMessaging.instance.getToken().then((token) {
       setState(() {
         myToken = token!;
-        print('My token $myToken');
       });
     });
   }

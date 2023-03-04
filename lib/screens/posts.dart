@@ -123,25 +123,28 @@ class _PostsState extends State<Posts> {
                                                 ? CrossAxisAlignment.end
                                                 : CrossAxisAlignment.start,
                                         children: [
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                post.userName,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                formattedDate,
-                                                style: TextStyle(
+                                          FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  post.userName,
+                                                  style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 12),
-                                              ),
-                                            ],
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  formattedDate,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(height: 5),
                                           Text(
