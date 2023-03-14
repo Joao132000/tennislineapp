@@ -78,8 +78,28 @@ class _MatchesState extends State<Matches> {
                         snapshot.data!.docs;
                     return Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Practice matches',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         const Text('Challenge Matches',
                             style: TextStyle(
@@ -97,25 +117,9 @@ class _MatchesState extends State<Matches> {
                         SizedBox(
                           height: 15,
                         ),
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Swipe to see practice matches -->',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                          ],
-                        )
+                        SizedBox(
+                          height: 10,
+                        ),
                       ],
                     );
                   } else if (snapshot.hasError) {

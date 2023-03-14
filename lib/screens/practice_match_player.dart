@@ -61,8 +61,28 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
                         snapshot.data!.docs;
                     return Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              Icons.arrow_back,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            Text('Challenge matches',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         const Text(
                           'Practice Matches',
@@ -103,28 +123,9 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
                                   .map((doc) => buildCard(context, doc))
                                   .toList()),
                         ),
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  '<-- Swipe to see challenge matches',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                          ],
-                        )
+                        SizedBox(
+                          height: 10,
+                        ),
                       ],
                     );
                   } else if (snapshot.hasError) {

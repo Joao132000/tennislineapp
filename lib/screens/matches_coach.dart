@@ -75,17 +75,34 @@ class _MatchesCoachState extends State<MatchesCoach> {
                         (a, b) => b['timeStamp'].compareTo(a['timeStamp']));
                     return Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Practice matches',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         const Text('Challenge Matches',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 30,
                             )),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -152,9 +169,6 @@ class _MatchesCoachState extends State<MatchesCoach> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         Expanded(
                           child: ListView.builder(
                             itemCount: (playerNameFilter == "All")
@@ -171,19 +185,9 @@ class _MatchesCoachState extends State<MatchesCoach> {
                             },
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Swipe to see practice matches -->',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            SizedBox(
-                              width: 20,
-                              height: 60,
-                            ),
-                          ],
-                        ),
+                        SizedBox(
+                          height: 10,
+                        )
                       ],
                     );
                   } else if (snapshot.hasError) {

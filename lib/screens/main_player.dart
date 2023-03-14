@@ -283,8 +283,28 @@ class _MainPlayerState extends State<MainPlayer> {
                   final List<DocumentSnapshot> documents = snapshot.data!.docs;
                   return Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Doubles lineup',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 15,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
                       ),
                       Text(university!,
                           style: const TextStyle(
@@ -461,18 +481,6 @@ class _MainPlayerState extends State<MainPlayer> {
                       ),
                       Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Swipe to see doubles lineup -->',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          ),
                           SizedBox(
                             height: 10,
                           ),

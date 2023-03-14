@@ -73,8 +73,28 @@ class _DoublesPlayerViewState extends State<DoublesPlayerView> {
                         snapshot.data!.docs;
                     return Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              Icons.arrow_back,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            Text(
+                              'Singles lineup',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         Text(widget.teamSchool,
                             style: const TextStyle(
@@ -92,20 +112,8 @@ class _DoublesPlayerViewState extends State<DoublesPlayerView> {
                         Expanded(
                           child: buildListView(documents, context),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Text(
-                              '<-- Swipe to see singles lineup',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
                         const SizedBox(
-                          height: 15,
+                          height: 10,
                         ),
                       ],
                     );

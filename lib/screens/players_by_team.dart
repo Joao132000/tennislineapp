@@ -5,7 +5,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tennislineapp/screens/posts.dart';
 import 'package:tennislineapp/screens/team_doubles.dart';
 
-import '../handlers/signin_signout.dart';
 import '../models/coach.dart';
 import 'matches_coach.dart';
 
@@ -29,12 +28,12 @@ class PlayersByTeam extends StatefulWidget {
 
 class _PlayersByTeamState extends State<PlayersByTeam> {
   final positionController = TextEditingController();
-  final newTeamCodeController = TextEditingController();
+  final notesController = TextEditingController();
 
   @override
   void dispose() {
     positionController.dispose();
-    newTeamCodeController.dispose();
+    notesController.dispose();
     super.dispose();
   }
 
@@ -71,21 +70,43 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                   final List<DocumentSnapshot> documents = snapshot.data!.docs;
                   return Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Doubles lineup',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 15,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
                       ),
                       Text(widget.teamSchool,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 25,
                           )),
-                      Text('Singles ${widget.teamType}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          )),
-                      const SizedBox(
-                        height: 20,
+                      Text(
+                        'Singles ${widget.teamType}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       Expanded(
                         child: buildListView(documents, context),
@@ -94,21 +115,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                         children: [
                           SizedBox(
                             height: 5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Swipe to see doubles lineup -->',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 2,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -296,21 +302,32 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
         buildIconButtonUpdate(context, doc),
         IconButton(
           onPressed: () {
+            final Map<String, dynamic> data =
+                doc.data() as Map<String, dynamic>;
+            if (data.containsKey('notes')) {
+              notesController.text = doc['notes'];
+            }
             showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                       title: Text(
-                        'Move ${doc['name']} to a new team:',
+                        '${doc['name']}:',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 25,
+                          fontSize: 20,
                         ),
                       ),
-                      content: TextField(
-                        controller: newTeamCodeController,
-                        textInputAction: TextInputAction.done,
-                        decoration:
-                            const InputDecoration(labelText: 'New Team Code'),
+                      content: Container(
+                        margin: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            border: Border.all(color: Colors.white30)),
+                        child: TextField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          controller: notesController,
+                        ),
                       ),
                       actions: [
                         Row(
@@ -323,40 +340,27 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                                   fontSize: 20,
                                 ),
                               ),
-                              onPressed: () async {
-                                await checkTeamFunc();
-                                if (checkTeam) {
-                                  final updateDoc = FirebaseFirestore.instance
-                                      .collection('player')
-                                      .doc(doc['id']);
-                                  setState(() {
-                                    updateDoc.update({
-                                      'teamId': newTeamCodeController.text,
-                                      'position': 0,
-                                      'challenge': false,
-                                    });
-                                  });
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignInSignOut(),
-                                    ),
+                              onPressed: () {
+                                final updateDoc = FirebaseFirestore.instance
+                                    .collection('player')
+                                    .doc(doc['id']);
+                                setState(() {
+                                  updateDoc.set(
+                                    {
+                                      'notes': notesController.text,
+                                    },
+                                    SetOptions(merge: true),
                                   );
-                                } else {
-                                  showDialog(
-                                    context: (context),
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Please enter a valid code'),
-                                      titlePadding: EdgeInsets.all(10),
-                                    ),
-                                  );
-                                }
+                                });
+                                notesController.text = "";
+                                Navigator.pop(context);
                               },
                             ),
                             TextButton(
-                              onPressed: () => Navigator.pop(context),
+                              onPressed: () {
+                                notesController.text = "";
+                                Navigator.pop(context);
+                              },
                               child: const Text(
                                 'Cancel',
                                 style: TextStyle(
@@ -370,27 +374,10 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                       ],
                     ));
           },
-          icon: const Icon(Icons.qr_code_2_sharp),
+          icon: const Icon(Icons.note_add_sharp),
         ),
       ],
     );
-  }
-
-  bool checkTeam = false;
-  Future checkTeamFunc() async {
-    if (newTeamCodeController.text != "") {
-      final docTeam = FirebaseFirestore.instance
-          .collection("team")
-          .doc(newTeamCodeController.text);
-      final snapshot = await docTeam.get();
-      if (snapshot.exists) {
-        checkTeam = true;
-      } else {
-        checkTeam = false;
-      }
-    } else {
-      checkTeam = false;
-    }
   }
 
   IconButton buildIconButtonUpdate(

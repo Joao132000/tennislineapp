@@ -44,7 +44,7 @@ class _MainCoachState extends State<MainCoach> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hey coach, welcome back!'),
+        title: Text('Welcome to Tennis LineApp'),
         automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<Item>(

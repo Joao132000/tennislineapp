@@ -32,7 +32,11 @@ class _TeamDoublesState extends State<TeamDoubles> {
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: const Text('Team Lineup'),
+        title: Center(
+          child: const Text(
+            'Team Lineup',
+          ),
+        ),
         automaticallyImplyLeading: false,
       ),
       body: GestureDetector(
@@ -54,8 +58,28 @@ class _TeamDoublesState extends State<TeamDoubles> {
                   final List<DocumentSnapshot> documents = snapshot.data!.docs;
                   return Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(
+                            Icons.arrow_back,
+                            size: 15,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            'Singles lineup',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
                       ),
                       Text(widget.teamSchool,
                           style: const TextStyle(
@@ -70,6 +94,12 @@ class _TeamDoublesState extends State<TeamDoubles> {
                       const SizedBox(
                         height: 20,
                       ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
                       Expanded(
                         child: buildListView(documents, context),
                       ),
@@ -77,25 +107,10 @@ class _TeamDoublesState extends State<TeamDoubles> {
                         height: 3,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            '<-- Swipe to see singles lineup',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           const SizedBox(
                             height: 70,
-                          ),
-                          const SizedBox(
-                            width: 10,
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -278,6 +293,9 @@ class _TeamDoublesState extends State<TeamDoubles> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
+                          ),
+                          const SizedBox(
+                            width: 10,
                           ),
                         ],
                       ),
